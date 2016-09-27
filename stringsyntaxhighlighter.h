@@ -16,6 +16,12 @@ private:
     };
     QVector<HighlightingRule> highlightingRules;
     QTextCharFormat stringFormat;
+    QTextCharFormat keywordFormat;
+    QTextCharFormat singleLineCommentFormat;
+    QTextCharFormat multiLineCommentFormat;
+    QTextCharFormat quotationFormat;
+    QRegExp commentStartExpression;
+       QRegExp commentEndExpression;
 };
 
 #endif // STRINGSYNTAXHIGHLIGHTER_H
