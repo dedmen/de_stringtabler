@@ -81,7 +81,7 @@ void stringTableEntryWidget::setCurrentItem(QSharedPointer<stringTableBase> newI
             newItem->setData(Qt::UserRole,usage.offset);
             newItem->setData(Qt::UserRole +1 ,usage.endoffset);
         }
-ui->list_Usages->setCurrentRow(0);
+        ui->list_Usages->setCurrentRow(0);
 
 
 
@@ -271,7 +271,8 @@ void stringTableEntryWidget::on_button_moveTo_clicked()
         emit updatedEntry(package);
     }
 }
-
+#include <functional>
+#include <QComboBox>
 void stringTableEntryWidget::on_table_Translations_cellChanged(int row, int column)
 {
     QSharedPointer<stringTableEntry> entry = qSharedPointerDynamicCast<stringTableEntry>(currentEntry);
@@ -286,11 +287,10 @@ void stringTableEntryWidget::on_table_Translations_cellChanged(int row, int colu
             combo->addItems({"Original", "English", "Czech", "French", "German", "Italian",
                              "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish","remove"});
             combo->setCurrentText("remove");
+            //TODO add slot that calls cellChanged when combo changed
+            //connect( combo,&QComboBox::currentIndexChanged,this ,&stringTableEntryWidget::on_table_Translations_cellChanged);
             ui->table_Translations->setCellWidget(ui->table_Translations->rowCount()-1,0,combo);
             ui->table_Translations->setItem(ui->table_Translations->rowCount()-1,1,new QTableWidgetItem());
-
-
-
         }
     }
     entry->clearTranslations();

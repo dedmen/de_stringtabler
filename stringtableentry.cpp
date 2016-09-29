@@ -208,7 +208,7 @@ void stringTable::save()
                 xmlWriter.writeAttribute(tagName,container->getTags()[tagName]);
             for (QSharedPointer<stringTableEntry> & entry : container->getEntries()){
                 xmlWriter.writeStartElement("Key");
-                xmlWriter.writeAttribute("name",entry->getName());
+                xmlWriter.writeAttribute("ID",entry->getName());
                 for (const QString & tagName : entry->getTags().keys())
                     xmlWriter.writeAttribute(tagName,entry->getTags()[tagName]);
                 QMap<language,QString> translations = entry->getTranslations();
