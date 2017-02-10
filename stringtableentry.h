@@ -18,8 +18,8 @@ enum class language {
     Russian,
     Spanish,
     Korean,
-    Japanese,
     Turkish,
+    Japanese,
     invalid
 };
 class stringTableEntry;

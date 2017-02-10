@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>749</width>
-    <height>567</height>
+    <width>651</width>
+    <height>198</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_Key">
       <attribute name="title">
@@ -28,13 +28,26 @@
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="QLabel" name="label_7">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>Stringtable</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="combo_Key_Stringtable"/>
+          <widget class="QComboBox" name="combo_Key_Stringtable">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -42,13 +55,26 @@
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QLabel" name="label">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>Package</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="combo_key_Package"/>
+          <widget class="QComboBox" name="combo_key_Package">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -56,13 +82,26 @@
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QLabel" name="label_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>Container</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="combo_key_Container"/>
+          <widget class="QComboBox" name="combo_key_Container">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -139,51 +178,32 @@
       <attribute name="title">
        <string>Package</string>
       </attribute>
-      <widget class="QLabel" name="label_6">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>220</y>
-         <width>161</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Package Name</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="edit_Package_PackageName">
-       <property name="geometry">
-        <rect>
-         <x>180</x>
-         <y>240</y>
-         <width>261</width>
-         <height>20</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QWidget" name="horizontalLayoutWidget_8">
-       <property name="geometry">
-        <rect>
-         <x>70</x>
-         <y>20</y>
-         <width>601</width>
-         <height>191</height>
-        </rect>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
-        <item>
-         <widget class="QLabel" name="label_9">
-          <property name="text">
-           <string>Stringtable</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="combo_Package_Stringtable"/>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>Stringtable</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="combo_Package_Stringtable"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Package Name</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="edit_Package_PackageName"/>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>

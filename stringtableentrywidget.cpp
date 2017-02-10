@@ -7,6 +7,7 @@ stringTableEntryWidget::stringTableEntryWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     highlighter = new stringSyntaxHighlighter(ui->text_usage->document());
+    //TODO http://www.codeprogress.com/cpp/libraries/qt/showQtExample.php?index=185&key=QCompleterQLineEdit
 }
 
 stringTableEntryWidget::~stringTableEntryWidget()

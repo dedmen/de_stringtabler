@@ -60,6 +60,7 @@ void addEntryDialog::on_buttonBox_accepted()
                 for (QSharedPointer<stringTableContainer> &container: containers){
                     if (container->getName().compare(ui->combo_key_Container->currentText()))
                         continue;
+                    newEntry->setName(ui->edit_Key_KeyName->text());
                     newEntry->setContainer(container);
                     container->addEntry(newEntry);
                     emit addedEntry(newEntry);
