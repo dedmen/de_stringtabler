@@ -1,6 +1,7 @@
 #include "stringtableentrywidget.h"
 #include "ui_stringtableentrywidget.h"
 #include <QDebug>
+#include <QPlainTextEdit>
 stringTableEntryWidget::stringTableEntryWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::stringTableEntryWidget)
@@ -57,29 +58,45 @@ void stringTableEntryWidget::setCurrentItem(QSharedPointer<stringTableBase> newI
         else
             ui->edit_PackageName->setText(entry->getPackage()->getName());
         ui->table_Translations->setDisabled(false);
+        QHeaderView *verticalHeader = ui->table_Translations->verticalHeader();
+        verticalHeader->setSectionResizeMode(QHeaderView::Fixed);
+        verticalHeader->setDefaultSectionSize(24);
+
         QMap<language,QString> translations = entry->getTranslations();
         int row = 0;
         for(auto& it : translations.toStdMap())//#Performance toStdMap copies entire map http://stackoverflow.com/questions/8517853/iterating-over-a-qmap-with-for
         {
             ui->table_Translations->insertRow(ui->table_Translations->rowCount());
-            QComboBox* combo = new QComboBox(NULL);
+            QComboBox* combo = new QComboBox(this);
             combo->addItems({"Original", "English", "Czech", "French", "German", "Italian",
                              "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish", "Chinese", "Chineseimp","remove"});
             combo->setCurrentIndex((int)it.first);
             ui->table_Translations->setCellWidget(row,0,combo);
-            ui->table_Translations->setItem(row,1,new QTableWidgetItem(it.second));
+            //if (it.second.contains("\n")){
+            //    //Tried to get multiline editing...
+            //    auto widget = new QPlainTextEdit(this);
+            //    widget->setPlainText(it.second);
+            //    //widget->show();
+            //
+            //    //ui->table_Translations->setRowHeight(row,widget->document()->size().height());
+            //    ui->table_Translations->setCellWidget(row,1,widget);
+            //} else {
+                ui->table_Translations->setItem(row,1,new QTableWidgetItem(it.second));
+            //}
+
+
 
             row++;
         }
 
         ui->table_Translations->insertRow(ui->table_Translations->rowCount());
 
-        QComboBox* combo = new QComboBox(NULL);
+        QComboBox* combo = new QComboBox(this);
         combo->addItems({"Original", "English", "Czech", "French", "German", "Italian",
                          "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish", "Chinese", "Chineseimp","remove"});
         combo->setCurrentText("remove");
         ui->table_Translations->setCellWidget(row,0,combo);
-        ui->table_Translations->setItem(row,1,new QTableWidgetItem());
+        //ui->table_Translations->setItem(row,1,new QTableWidgetItem());
 
         ui->list_Usages->clear();
         auto usages = entry->getUsages();
@@ -89,9 +106,7 @@ void stringTableEntryWidget::setCurrentItem(QSharedPointer<stringTableBase> newI
             newItem->setData(Qt::UserRole +1 ,usage.endoffset);
         }
         ui->list_Usages->setCurrentRow(0);
-
-
-
+        ui->table_Translations->resizeRowsToContents();
     } else if (container){
         entryType = 1;
         ui->edit_EntryName->clear();
@@ -165,7 +180,7 @@ void stringTableEntryWidget::on_edit_ContainerName_returnPressed()
     if (entryType == 0){//entry
         QSharedPointer<stringTableEntry> entry = qSharedPointerCast<stringTableEntry>(currentEntry);
         if (entry->getContainer()) //#TODO disable containerName field if entry is child of package
-        entry->getContainer()->setName(ui->edit_ContainerName->text());
+            entry->getContainer()->setName(ui->edit_ContainerName->text());
         emit updatedEntry(entry);
     } else if(entryType == 1){//container
         QSharedPointer<stringTableContainer> container = qSharedPointerCast<stringTableContainer>(currentEntry);
@@ -310,7 +325,9 @@ void stringTableEntryWidget::on_table_Translations_cellChanged(int row, int colu
             continue;
         }
         language lang = (language)(((QComboBox*)ui->table_Translations->cellWidget(var,0))->currentIndex());
-        QString translation = ui->table_Translations->item(var,1)->text();
+
+        //#QString translation = ui->table_Translations->item(var,1)->text();
+        QString translation = ui->table_Translations->cellWidget(var,1) ? ((QPlainTextEdit*)ui->table_Translations->cellWidget(var,1))->toPlainText() : ui->table_Translations->item(var,1)->text();
         qDebug() << "set" << (int)lang << translation;
         entry->setTranslation(lang,translation);
     }
