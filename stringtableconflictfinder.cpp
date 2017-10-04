@@ -152,6 +152,11 @@ QStringList stringtableConflictFinder::processFile(QString filePath)
             foundKeys << "$*"+word;
         else
             foundKeys << "*"+word;
+        for (QSharedPointer<stringTable> &stable : stringTables){
+            QSharedPointer<stringTableEntry> x = qSharedPointerDynamicCast<stringTableEntry>(stable->findByName(word));
+            if (x)
+                x->addUsage({filePath,match.capturedStart(1),match.capturedEnd(1)});
+        }
     }
 
 

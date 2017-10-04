@@ -306,9 +306,13 @@ QSharedPointer<stringTableBase> stringTable::findByName(QString name)
             if (!container->getName().compare(name,Qt::CaseInsensitive))
                 return container;
             for (QSharedPointer<stringTableEntry> & entry : container->getEntries()){
-                if (!entry->getName().compare(name,Qt::CaseInsensitive))
+                if (entry->getName().endsWith(name))
                     return entry;
             }
+        }
+        for (QSharedPointer<stringTableEntry> & entry : package->getEntries()){
+            if (entry->getName().endsWith(name))
+                return entry;
         }
     }
     return QSharedPointer<stringTableBase>();
