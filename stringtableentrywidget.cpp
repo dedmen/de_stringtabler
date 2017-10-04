@@ -47,9 +47,15 @@ void stringTableEntryWidget::setCurrentItem(QSharedPointer<stringTableBase> newI
         ui->edit_EntryName->setDisabled(false);
         ui->edit_EntryName->setText(entry->getName());
         ui->edit_ContainerName->setDisabled(false);
-        ui->edit_ContainerName->setText(entry->getContainer()->getName());
+        if (entry->getContainer())
+            ui->edit_ContainerName->setText(entry->getContainer()->getName());
+        else
+            ui->edit_ContainerName->setText("");
         ui->edit_PackageName->setDisabled(false);
-        ui->edit_PackageName->setText(entry->getContainer()->getPackage()->getName());
+        if (entry->getContainer())
+            ui->edit_PackageName->setText(entry->getContainer()->getPackage()->getName());
+        else
+            ui->edit_PackageName->setText(entry->getPackage()->getName());
         ui->table_Translations->setDisabled(false);
         QMap<language,QString> translations = entry->getTranslations();
         int row = 0;
@@ -58,7 +64,7 @@ void stringTableEntryWidget::setCurrentItem(QSharedPointer<stringTableBase> newI
             ui->table_Translations->insertRow(ui->table_Translations->rowCount());
             QComboBox* combo = new QComboBox(NULL);
             combo->addItems({"Original", "English", "Czech", "French", "German", "Italian",
-                             "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish","remove"});
+                             "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish", "Chinese", "Chineseimp","remove"});
             combo->setCurrentIndex((int)it.first);
             ui->table_Translations->setCellWidget(row,0,combo);
             ui->table_Translations->setItem(row,1,new QTableWidgetItem(it.second));
@@ -70,7 +76,7 @@ void stringTableEntryWidget::setCurrentItem(QSharedPointer<stringTableBase> newI
 
         QComboBox* combo = new QComboBox(NULL);
         combo->addItems({"Original", "English", "Czech", "French", "German", "Italian",
-                         "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish","remove"});
+                         "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish", "Chinese", "Chineseimp","remove"});
         combo->setCurrentText("remove");
         ui->table_Translations->setCellWidget(row,0,combo);
         ui->table_Translations->setItem(row,1,new QTableWidgetItem());
@@ -136,7 +142,10 @@ void stringTableEntryWidget::on_edit_PackageName_returnPressed()
     //if package exists in table then move.. else create new package
     if (entryType == 0){//entry
         QSharedPointer<stringTableEntry> entry = qSharedPointerCast<stringTableEntry>(currentEntry);
-        entry->getContainer()->getPackage()->setName(ui->edit_PackageName->text());
+        if (entry->getContainer())
+            entry->getContainer()->getPackage()->setName(ui->edit_PackageName->text());
+        else
+            entry->getPackage()->setName(ui->edit_PackageName->text());
         emit updatedEntry(entry);
     } else if(entryType == 1){//container
         QSharedPointer<stringTableContainer> container = qSharedPointerCast<stringTableContainer>(currentEntry);
@@ -155,6 +164,7 @@ void stringTableEntryWidget::on_edit_ContainerName_returnPressed()
     //if container exists in table then move.. else create new container
     if (entryType == 0){//entry
         QSharedPointer<stringTableEntry> entry = qSharedPointerCast<stringTableEntry>(currentEntry);
+        if (entry->getContainer()) //#TODO disable containerName field if entry is child of package
         entry->getContainer()->setName(ui->edit_ContainerName->text());
         emit updatedEntry(entry);
     } else if(entryType == 1){//container
@@ -246,7 +256,7 @@ void stringTableEntryWidget::on_button_moveTo_clicked()
     if (entryType == 0){//moving entry
         qDebug() << "move" << entryType << targetTable->getName()<< targetPackage->getName()<< targetContainer->getName();
         QSharedPointer<stringTableEntry> entry = qSharedPointerCast<stringTableEntry>(currentEntry);
-        entry->getContainer()->removeEntry(entry);
+        entry->getContainer()->removeEntry(entry);//#TODO fix for package with entry
         if (entry->getContainer()->getEntries().isEmpty()){
             QSharedPointer<stringTablePackage> package = entry->getContainer()->getPackage();
             package->removeContainer(entry->getContainer());
@@ -286,7 +296,7 @@ void stringTableEntryWidget::on_table_Translations_cellChanged(int row, int colu
 
             QComboBox* combo = new QComboBox(NULL);
             combo->addItems({"Original", "English", "Czech", "French", "German", "Italian",
-                             "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish","remove"});
+                             "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish", "Chinese", "Chineseimp","remove"});
             combo->setCurrentText("remove");
             //TODO add slot that calls cellChanged when combo changed
             //connect( combo,&QComboBox::currentIndexChanged,this ,&stringTableEntryWidget::on_table_Translations_cellChanged);

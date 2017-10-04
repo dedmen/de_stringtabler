@@ -19,6 +19,13 @@ void stringTablePackage::addContainer(QSharedPointer<stringTableContainer> &pCon
     pContainer->setPackage(sharedFromThis());
 }
 
+void stringTablePackage::addEntry(QSharedPointer<stringTableEntry> &pEntry)
+{
+    if (!entries.contains(pEntry))
+        entries.push_back(pEntry);
+    pEntry->setPackage(sharedFromThis());
+}
+
 void stringTableContainer::addEntry(QSharedPointer<stringTableEntry> &pEntry)
 {
     if (!entries.contains(pEntry))
@@ -48,40 +55,46 @@ QString languageToString(language lang){
     case language::Korean      : return "Korean";
     case language::Japanese    : return "Japanese";
     case language::Turkish     : return "Turkish";
+    case language::Chinese     : return "Chinese";
+    case language::Chinesesimp : return "Chinesesimp";
     }
 }
 language stringToLanguage(QStringRef lang){
-    if (!lang.compare("Original",Qt::CaseInsensitive))
+    if (!lang.compare(QLatin1Literal("Original"),Qt::CaseInsensitive))
         return language::Original;
-    else if (!lang.compare("English",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("English"),Qt::CaseInsensitive))
         return language::English;
-    else if (!lang.compare("Czech",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("Czech"),Qt::CaseInsensitive))
         return language::Czech;
-    else if (!lang.compare("French",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("French"),Qt::CaseInsensitive))
         return language::French;
-    else if (!lang.compare("German",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("German"),Qt::CaseInsensitive))
         return language::German;
-    else if (!lang.compare("Italian",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("Italian"),Qt::CaseInsensitive))
         return language::Italian;
-    else if (!lang.compare("Polish",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("Polish"),Qt::CaseInsensitive))
         return language::Polish;
-    else if (!lang.compare("Portuguese",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("Portuguese"),Qt::CaseInsensitive))
         return language::Portuguese;
-    else if (!lang.compare("Russian",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("Russian"),Qt::CaseInsensitive))
         return language::Russian;
-    else if (!lang.compare("Spanish",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("Spanish"),Qt::CaseInsensitive))
         return language::Spanish;
-    else if (!lang.compare("Korean",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("Korean"),Qt::CaseInsensitive))
         return language::Korean;
-    else if (!lang.compare("Japanese",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("Japanese"),Qt::CaseInsensitive))
         return language::Japanese;
-    else if (!lang.compare("Turkish",Qt::CaseInsensitive))
+    else if (!lang.compare(QLatin1Literal("Turkish"),Qt::CaseInsensitive))
         return language::Turkish;
+    else if (!lang.compare(QLatin1Literal("Chinese"),Qt::CaseInsensitive))
+        return language::Chinese;
+    else if (!lang.compare(QLatin1Literal("Chinesesimp"),Qt::CaseInsensitive))
+        return language::Chinesesimp;
     else
         return language::invalid;
 }
 #define processTags(element) for (QXmlStreamAttribute attribute : xmlReader.attributes()){\
-    if (!attribute.name().compare("name",Qt::CaseInsensitive)|| !attribute.name().compare("ID",Qt::CaseInsensitive)){\
+    if (!attribute.name().compare(QLatin1Literal("name"),Qt::CaseInsensitive)|| !attribute.name().compare(QLatin1Literal("ID"),Qt::CaseInsensitive)){\
     element->setName(attribute.value().toString());\
     } else\
     element->setTag(attribute.name().toString(),attribute.value().toString());\
@@ -101,16 +114,19 @@ bool stringTable::parse(QString filePath)
     while (!xmlReader.atEnd()) {
         xmlReader.readNextStartElement();
 
-        while (!xmlReader.name().compare("Project",Qt::CaseInsensitive)){
+        while (!xmlReader.atEnd() && !xmlReader.name().compare(QLatin1Literal("Project"),Qt::CaseInsensitive)){
+            qDebug() << "parse" << xmlReader.name();
             for (QXmlStreamAttribute attribute : xmlReader.attributes()){
                 setTag(attribute.name().toString(),attribute.value().toString());
             }
-            xmlReader.readNextStartElement();
-            while (!xmlReader.name().compare("Package",Qt::CaseInsensitive)){
+            ;
+            qDebug() << "nparse" << xmlReader.readNextStartElement();
+            qDebug()<< xmlReader.name();
+            while (!xmlReader.name().compare(QLatin1Literal("Package"),Qt::CaseInsensitive)){
                 QSharedPointer<stringTablePackage> newPackage = QSharedPointer<stringTablePackage>::create();
 
                 for (QXmlStreamAttribute attribute : xmlReader.attributes()){
-                    if (!attribute.name().compare("name",Qt::CaseInsensitive) || !attribute.name().compare("ID",Qt::CaseInsensitive)){
+                    if (!attribute.name().compare(QLatin1Literal("name"),Qt::CaseInsensitive) || !attribute.name().compare(QLatin1Literal("ID"),Qt::CaseInsensitive)){
                         newPackage->setName(attribute.value().toString());
                     } else
                         newPackage->setTag(attribute.name().toString(),attribute.value().toString());
@@ -119,15 +135,39 @@ bool stringTable::parse(QString filePath)
                 //processTags(newPackage);
                 addPackage(newPackage);
                 xmlReader.readNextStartElement();
-                while (!xmlReader.name().compare("Container",Qt::CaseInsensitive)){
-                    QSharedPointer<stringTableContainer> newContainer = QSharedPointer<stringTableContainer>::create();
-                    processTags(newContainer);
-                    newPackage->addContainer(newContainer);
-                    xmlReader.readNextStartElement();
-                    while (!xmlReader.name().compare("Key",Qt::CaseInsensitive)){
+                while (!xmlReader.name().compare(QLatin1Literal("Container"),Qt::CaseInsensitive) || !xmlReader.name().compare(QLatin1Literal("Key"),Qt::CaseInsensitive)){
+
+                    if (!xmlReader.name().compare(QLatin1Literal("Container"),Qt::CaseInsensitive)){
+                        QSharedPointer<stringTableContainer> newContainer = QSharedPointer<stringTableContainer>::create();
+                        processTags(newContainer);
+                        newPackage->addContainer(newContainer);
+                        xmlReader.readNextStartElement();
+
+
+                        while (!xmlReader.name().compare(QLatin1Literal("Key"),Qt::CaseInsensitive)){
+                            QSharedPointer<stringTableEntry> newEntry = QSharedPointer<stringTableEntry>::create();
+                            processTags(newEntry);
+                            newContainer->addEntry(newEntry);
+                            xmlReader.readNextStartElement();
+                            language lang = language::invalid;
+                            while ((lang = stringToLanguage(xmlReader.name())) !=language::invalid ){
+                                if (lang == language::invalid)
+                                    break;
+                                QString translation = xmlReader.readElementText().trimmed();
+                                newEntry->setTranslation(lang,translation);
+                                xmlReader.readNextStartElement();
+                            }
+                            if (xmlReader.tokenType() != QXmlStreamReader::StartElement)//Sometimes doesnt read till next start element
+                                xmlReader.readNextStartElement();
+                        }
+
+
+                        if (xmlReader.tokenType() != QXmlStreamReader::StartElement)//Sometimes doesnt read till next start element
+                            xmlReader.readNextStartElement();
+                    } else {
                         QSharedPointer<stringTableEntry> newEntry = QSharedPointer<stringTableEntry>::create();
                         processTags(newEntry);
-                        newContainer->addEntry(newEntry);
+                        newPackage->addEntry(newEntry);
                         xmlReader.readNextStartElement();
                         language lang = language::invalid;
                         while ((lang = stringToLanguage(xmlReader.name())) !=language::invalid ){
@@ -140,17 +180,19 @@ bool stringTable::parse(QString filePath)
                         if (xmlReader.tokenType() != QXmlStreamReader::StartElement)//Sometimes doesnt read till next start element
                             xmlReader.readNextStartElement();
                     }
-                    if (xmlReader.tokenType() != QXmlStreamReader::StartElement)//Sometimes doesnt read till next start element
-                        xmlReader.readNextStartElement();
+
+
                 }
                 if (xmlReader.tokenType() != QXmlStreamReader::StartElement)//Sometimes doesnt read till next start element
                     xmlReader.readNextStartElement();
 
             }
 
-
+            qDebug() << "lparse" << xmlReader.name();
+            xmlReader.readNext();
         }
-        xmlReader.readNext();
+        if (!xmlReader.atEnd())
+            xmlReader.readNext();
         qDebug() << xmlReader.name();
 
 
@@ -201,12 +243,32 @@ void stringTable::save()
         xmlWriter.writeAttribute("name",package->getName());
         for (const QString & tagName : package->getTags().keys())
             xmlWriter.writeAttribute(tagName,package->getTags()[tagName]);
-        for (QSharedPointer<stringTableContainer> & container : package->getContainers()){
-            xmlWriter.writeStartElement("Container");
-            xmlWriter.writeAttribute("name",container->getName());
-            for (const QString & tagName : container->getTags().keys())
-                xmlWriter.writeAttribute(tagName,container->getTags()[tagName]);
-            for (QSharedPointer<stringTableEntry> & entry : container->getEntries()){
+        if (!package->getContainers().empty())
+            for (QSharedPointer<stringTableContainer> & container : package->getContainers()){
+                xmlWriter.writeStartElement("Container");
+                xmlWriter.writeAttribute("name",container->getName());
+                for (const QString & tagName : container->getTags().keys())
+                    xmlWriter.writeAttribute(tagName,container->getTags()[tagName]);
+                for (QSharedPointer<stringTableEntry> & entry : container->getEntries()){
+                    xmlWriter.writeStartElement("Key");
+                    xmlWriter.writeAttribute("ID",entry->getName());
+                    for (const QString & tagName : entry->getTags().keys())
+                        xmlWriter.writeAttribute(tagName,entry->getTags()[tagName]);
+                    QMap<language,QString> translations = entry->getTranslations();
+                    for (language lang : translations.keys()){//#TODO order the same as it was ordered when parsed. If entry is new then insert following our enum order
+                        if (lang >= language::invalid)
+                            continue;
+                        xmlWriter.writeStartElement(languageToString(lang));
+                        xmlWriter.writeCharacters(translations[lang]);
+                        xmlWriter.writeEndElement();
+                        qDebug() << "wroteTranslation";
+                    }
+                    xmlWriter.writeEndElement();
+                }
+                xmlWriter.writeEndElement();
+            }
+        if (!package->getEntries().empty())
+            for (QSharedPointer<stringTableEntry> & entry : package->getEntries()){
                 xmlWriter.writeStartElement("Key");
                 xmlWriter.writeAttribute("ID",entry->getName());
                 for (const QString & tagName : entry->getTags().keys())
@@ -222,8 +284,6 @@ void stringTable::save()
                 }
                 xmlWriter.writeEndElement();
             }
-            xmlWriter.writeEndElement();
-        }
         xmlWriter.writeEndElement();
     }
     xmlWriter.writeEndElement();

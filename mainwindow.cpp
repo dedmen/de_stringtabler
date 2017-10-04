@@ -32,7 +32,7 @@ void MainWindow::on_actionLoadProject_triggered()
                                                           "Give Project Path",
                                                           QString(),
                                                           QFileDialog::ShowDirsOnly);
-
+if (directory.isEmpty()) return;
 
     currentSelectedEntry = QSharedPointer<stringTableBase>();
     ui->widget_Entry->setCurrentItem(QSharedPointer<stringTableBase>());
@@ -138,6 +138,53 @@ void MainWindow::on_tree_Tables_currentItemChanged(QTreeWidgetItem *current, QTr
             }
             packageItem->addChild(containerItem);
         }
+
+
+
+
+
+
+        QVector<QSharedPointer<stringTableEntry>> entries =  package->getEntries();
+        for (QSharedPointer<stringTableEntry> &entry: entries){
+            if (!ui->edit_filter->text().isEmpty()){
+                bool filterMatch = entry->getName().contains(ui->edit_filter->text(),Qt::CaseInsensitive);
+                if (!filterMatch)
+                    for (QString& it : entry->getTranslations().values())
+                        if (it.contains(ui->edit_filter->text(),Qt::CaseInsensitive))
+                        {
+                            filterMatch = true;
+                            break;
+                        }
+                if (!filterMatch)
+                    for (QString& it : entry->getTags().values())
+                        if (it.contains(ui->edit_filter->text(),Qt::CaseInsensitive))
+                        {
+                            filterMatch = true;
+                            break;
+                        }
+                if (!filterMatch)
+                    continue;
+            }
+
+            auto entryItem = new QTreeWidgetItem();
+            entryItem->setText(0,entry->getName());
+            entryItem->setData(0,Qt::UserRole,0);
+            packageItem->addChild(entryItem);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         ui->tree_Entries->addTopLevelItem(packageItem);
     }
     ui->tree_Entries->expandAll();
@@ -158,19 +205,29 @@ void MainWindow::on_tree_Entries_currentItemChanged(QTreeWidgetItem *current, QT
     switch (current->data(0,Qt::UserRole).toInt()){
     case 0://entry
     {
-        QSharedPointer<stringTablePackage> package = packages[current->parent()->parent()->text(0)];
-        for (QSharedPointer<stringTableContainer>& container : package->getContainers()){
-            if (!container->getName().compare(current->parent()->text(0))){
-                for (QSharedPointer<stringTableEntry>& entry : container->getEntries()){
-                    if (!entry->getName().compare(current->text(0))){
-                        ui->widget_Entry->setCurrentItem(entry);
-                        currentSelectedEntry = entry;
-                        return;
+        if (current->parent()->parent()){//Has container and package
+            QSharedPointer<stringTablePackage> package = packages[current->parent()->parent()->text(0)];
+            for (QSharedPointer<stringTableContainer>& container : package->getContainers()){
+                if (!container->getName().compare(current->parent()->text(0))){
+                    for (QSharedPointer<stringTableEntry>& entry : container->getEntries()){
+                        if (!entry->getName().compare(current->text(0))){
+                            ui->widget_Entry->setCurrentItem(entry);
+                            currentSelectedEntry = entry;
+                            return;
+                        }
                     }
                 }
             }
         }
-
+ QSharedPointer<stringTablePackage> package = packages[current->parent()->text(0)];
+//No container. Direct child of package
+        for (QSharedPointer<stringTableEntry>& entry : package->getEntries()){
+            if (!entry->getName().compare(current->text(0))){
+                ui->widget_Entry->setCurrentItem(entry);
+                currentSelectedEntry = entry;
+                return;
+            }
+        }
         break;
     }
     case 1://container
@@ -189,7 +246,7 @@ void MainWindow::on_tree_Entries_currentItemChanged(QTreeWidgetItem *current, QT
         ui->widget_Entry->setCurrentItem(packages[current->text(0)]);
         currentSelectedEntry = packages[current->text(0)];
         break;
-    }
+}
 }
 
 void MainWindow::on_edit_filter_textChanged(const QString &arg1)

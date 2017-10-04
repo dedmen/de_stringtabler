@@ -17,9 +17,11 @@ enum class language {
     Portuguese,
     Russian,
     Spanish,
-    Korean,
     Turkish,
     Japanese,
+    Korean,
+    Chinese,
+    Chinesesimp,
     invalid
 };
 class stringTableEntry;
@@ -56,17 +58,21 @@ class stringTablePackage : public stringTableBase , public QEnableSharedFromThis
     Q_OBJECT
 public:
     explicit stringTablePackage(QObject *parent = 0) : stringTableBase(parent) {}
-    void setTable(QSharedPointer<stringTable>& pTable){table = pTable;}
+    void setTable(QSharedPointer<stringTable> pTable){table = pTable;}
     QSharedPointer<stringTable> getTable() {return table;}
     void addContainer(QSharedPointer<stringTableContainer>& pContainer);
-    void removeContainer(QSharedPointer<stringTableContainer>& pContainer){containers.removeAll(pContainer);}
+    void removeContainer(QSharedPointer<stringTableContainer> pContainer){containers.removeAll(pContainer);}
     QVector<QSharedPointer<stringTableContainer>> getContainers(){return containers;}
+    void addEntry(QSharedPointer<stringTableEntry>& pEntry);
+    void removeEntry(QSharedPointer<stringTableEntry>& pEntry){entries.removeAll(pEntry);}
+    QVector<QSharedPointer<stringTableEntry>> getEntries(){return entries;}
 signals:
 
 public slots:
 private:
     QSharedPointer<stringTable> table;
     QVector<QSharedPointer<stringTableContainer>> containers;
+    QVector<QSharedPointer<stringTableEntry>> entries;
 };
 
 class stringTableContainer : public stringTableBase, public QEnableSharedFromThis<stringTableContainer>
@@ -74,7 +80,7 @@ class stringTableContainer : public stringTableBase, public QEnableSharedFromThi
     Q_OBJECT
 public:
     explicit stringTableContainer(QObject *parent = 0) : stringTableBase(parent) {}
-    void setPackage(QSharedPointer<stringTablePackage>& pPackage) {package = pPackage;}
+    void setPackage(QSharedPointer<stringTablePackage> pPackage) {package = pPackage;}
     QSharedPointer<stringTablePackage> getPackage(){return package;}
     void addEntry(QSharedPointer<stringTableEntry>& pEntry);
     void removeEntry(QSharedPointer<stringTableEntry>& pEntry){entries.removeAll(pEntry);}
@@ -97,8 +103,10 @@ public:
     bool setTranslation(language lang,QString translation);
     QMap<language,QString> getTranslations(){return translations; }
     void clearTranslations();
-    void setContainer(QSharedPointer<stringTableContainer>& pContainer) {container = pContainer;}
+    void setContainer(QSharedPointer<stringTableContainer> pContainer) {container = pContainer;}
     QSharedPointer<stringTableContainer> getContainer(){return container;}
+    void setPackage(QSharedPointer<stringTablePackage> pPackage) {package = pPackage;}
+    QSharedPointer<stringTablePackage> getPackage(){return package;}
     QVector<fileLocation> getUsages(){return usages;}
     void addUsage(fileLocation path){usages << path;}
 signals:
@@ -106,6 +114,7 @@ signals:
 public slots:
 private:
     QSharedPointer<stringTableContainer> container;
+    QSharedPointer<stringTablePackage> package;
     QVector<fileLocation> usages;
     QMap<language,QString> translations;
 };
