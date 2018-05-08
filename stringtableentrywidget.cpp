@@ -355,3 +355,26 @@ void stringTableEntryWidget::on_list_Usages_currentItemChanged(QListWidgetItem *
     ui->text_usage->setFocus();
     highlighter->setDocument(ui->text_usage->document());
 }
+
+void stringTableEntryWidget::on_table_tags_cellChanged(int row, int column) {
+    QSharedPointer<stringTableBase> entry = currentEntry;
+    if (!entry)
+        return;//#TODO throw error
+
+
+    auto key = ui->table_tags->item(row,0)->text();
+    auto value = ui->table_tags->item(row,1)->text();
+
+    if (value.isEmpty())
+        entry->removeTag(key);
+    else
+        entry->setTag(key, value);
+
+    if (row == ui->table_tags->rowCount()-1){
+        ui->table_tags->blockSignals(true); //without this insertRow would call cellChanged
+        ui->table_tags->insertRow(ui->table_tags->rowCount());
+        ui->table_tags->setItem(ui->table_tags->rowCount()-1,0,new QTableWidgetItem());
+        ui->table_tags->setItem(ui->table_tags->rowCount()-1,1,new QTableWidgetItem());
+        ui->table_tags->blockSignals(false);
+    }
+}

@@ -37,6 +37,8 @@ private slots:
         void on_table_Translations_cellChanged(int row, int column);
         void on_list_Usages_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
+        void on_table_tags_cellChanged(int row, int column);
+
 private:
     QSharedPointer<stringTableBase> currentEntry;
     int entryType;//0 entry, 1 container, 2 package
