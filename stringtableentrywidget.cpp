@@ -69,7 +69,17 @@ void stringTableEntryWidget::setCurrentItem(QSharedPointer<stringTableBase> newI
             ui->table_Translations->insertRow(ui->table_Translations->rowCount());
             QComboBox* combo = new QComboBox(this);
             combo->addItems({"Original", "English", "Czech", "French", "German", "Italian",
-                             "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish", "Chinese", "Chineseimp","remove"});
+                             "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish", "Chinese", "Chineseimp",
+                             "Swedish",
+                             "Slovak",
+                             "SerboCroatian",
+                             "Norwegian",
+                             "Icelandic",
+                             "Hungarian",
+                             "Greek",
+                             "Finnish",
+                             "Dutch"
+                             ,"remove"});
             combo->setCurrentIndex((int)it.first);
             ui->table_Translations->setCellWidget(row,0,combo);
             //if (it.second.contains("\n")){
@@ -93,7 +103,17 @@ void stringTableEntryWidget::setCurrentItem(QSharedPointer<stringTableBase> newI
 
         QComboBox* combo = new QComboBox(this);
         combo->addItems({"Original", "English", "Czech", "French", "German", "Italian",
-                         "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish", "Chinese", "Chineseimp","remove"});
+                         "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish", "Chinese", "Chineseimp",
+                         "Swedish",
+                         "Slovak",
+                         "SerboCroatian",
+                         "Norwegian",
+                         "Icelandic",
+                         "Hungarian",
+                         "Greek",
+                         "Finnish",
+                         "Dutch"
+                         ,"remove"});
         combo->setCurrentText("remove");
         ui->table_Translations->setCellWidget(row,0,combo);
         //ui->table_Translations->setItem(row,1,new QTableWidgetItem());
@@ -311,7 +331,18 @@ void stringTableEntryWidget::on_table_Translations_cellChanged(int row, int colu
 
             QComboBox* combo = new QComboBox(NULL);
             combo->addItems({"Original", "English", "Czech", "French", "German", "Italian",
-                             "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish", "Chinese", "Chineseimp","remove"});
+                             "Polish", "Portuguese", "Russian", "Spanish", "Korean", "Japanese", "Turkish", "Chinese", "Chineseimp",
+                             "Swedish",
+                             "Slovak",
+                             "SerboCroatian",
+                             "Norwegian",
+                             "Icelandic",
+                             "Hungarian",
+                             "Greek",
+                             "Finnish",
+                             "Dutch"
+
+                             ,"remove"});
             combo->setCurrentText("remove");
             //TODO add slot that calls cellChanged when combo changed
             //connect( combo,&QComboBox::currentIndexChanged,this ,&stringTableEntryWidget::on_table_Translations_cellChanged);

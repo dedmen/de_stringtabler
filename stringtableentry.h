@@ -22,6 +22,15 @@ enum class language {
     Korean,
     Chinese,
     Chinesesimp,
+    Swedish,
+    Slovak,
+    SerboCroatian,
+    Norwegian,
+    Icelandic,
+    Hungarian,
+    Greek,
+    Finnish,
+    Dutch,
     invalid
 };
 class stringTableEntry;

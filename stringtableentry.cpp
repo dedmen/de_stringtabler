@@ -57,6 +57,15 @@ QString languageToString(language lang){
     case language::Turkish     : return "Turkish";
     case language::Chinese     : return "Chinese";
     case language::Chinesesimp : return "Chinesesimp";
+    case language::Swedish      : return "Swedish";
+    case language::Slovak       : return "Slovak";
+    case language::SerboCroatian: return "SerboCroatian";
+    case language::Norwegian    : return "Norwegian";
+    case language::Icelandic    : return "Icelandic";
+    case language::Hungarian    : return "Hungarian";
+    case language::Greek        : return "Greek";
+    case language::Finnish      : return "Finnish";
+    case language::Dutch        : return "Dutch";
     }
 }
 language stringToLanguage(QStringRef lang){
@@ -90,6 +99,24 @@ language stringToLanguage(QStringRef lang){
         return language::Chinese;
     else if (!lang.compare(QLatin1Literal("Chinesesimp"),Qt::CaseInsensitive))
         return language::Chinesesimp;
+    else if (!lang.compare(QLatin1Literal("Swedish"),Qt::CaseInsensitive))
+        return language::Swedish;
+    else if (!lang.compare(QLatin1Literal("Slovak"),Qt::CaseInsensitive))
+        return language::Slovak;
+    else if (!lang.compare(QLatin1Literal("SerboCroatian"),Qt::CaseInsensitive))
+        return language::SerboCroatian;
+    else if (!lang.compare(QLatin1Literal("Norwegian"),Qt::CaseInsensitive))
+        return language::Norwegian;
+    else if (!lang.compare(QLatin1Literal("Icelandic"),Qt::CaseInsensitive))
+        return language::Icelandic;
+    else if (!lang.compare(QLatin1Literal("Hungarian"),Qt::CaseInsensitive))
+        return language::Hungarian;
+    else if (!lang.compare(QLatin1Literal("Greek"),Qt::CaseInsensitive))
+        return language::Greek;
+    else if (!lang.compare(QLatin1Literal("Finnish"),Qt::CaseInsensitive))
+        return language::Finnish;
+    else if (!lang.compare(QLatin1Literal("Dutch"),Qt::CaseInsensitive))
+        return language::Dutch;
     else
         return language::invalid;
 }
