@@ -1,6 +1,6 @@
 #include "stringtableentry.h"
 #include <QXmlStreamReader>
-#include <QmessageBox>
+#include <QMessageBox>
 #include <QFile>
 #include <QDebug>
 

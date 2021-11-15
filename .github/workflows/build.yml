@@ -1,0 +1,55 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2019, ubuntu-20.04, macos-11]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Visual Studio cl.exe
+        uses: ilammy/msvc-dev-cmd@v1
+        if: ${{ runner.os == 'Windows' }}
+
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v1
+        with:
+          path: ../Qt
+          key: ${{ runner.os }}-QtCache
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
+      - name: Setup project
+        run: qmake  -config release de_Stringtabler.pro DESTDIR=build
+
+      - name: Build with make
+        run: make
+        if: ${{ runner.os != 'Windows' }}
+
+      - name: Build with nmake
+        run: nmake
+        if: ${{ runner.os == 'Windows' }}
+
+      - name: Bundle macOS dependencies
+        run: macdeployqt build/de_Stringtabler.app
+        if: ${{ runner.os == 'macOS' }}
+
+      - name: Bundle Windows dependencies
+        run: windeployqt build/de_Stringtabler.exe
+        if: ${{ runner.os == 'Windows' }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ matrix.os }}
+          path: build
