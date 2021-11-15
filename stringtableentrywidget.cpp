@@ -358,7 +358,7 @@ void stringTableEntryWidget::on_table_Translations_cellChanged(int row, int colu
         language lang = (language)(((QComboBox*)ui->table_Translations->cellWidget(var,0))->currentIndex());
 
         //#QString translation = ui->table_Translations->item(var,1)->text();
-        QString translation = ui->table_Translations->cellWidget(var,1) ? ((QPlainTextEdit*)ui->table_Translations->cellWidget(var,1))->toPlainText() : ui->table_Translations->item(var,1)->text();
+        QString translation = ui->table_Translations->cellWidget(var,1) ? ((QLineEdit*)ui->table_Translations->cellWidget(var,1))->text() : ui->table_Translations->item(var,1)->text();
         qDebug() << "set" << (int)lang << translation;
         entry->setTranslation(lang,translation);
     }
